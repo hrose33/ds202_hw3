@@ -1,0 +1,61 @@
+---
+title: Homework 3
+author: Hunter Rose, hrose33
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(caret)
+```
+```{r}
+tips <- reshape2::tips
+numParty <- nrow(tips)
+```
+```{r}
+sapply(tips, typeof)
+```
+The variables are all either a double or an integer. There are 4 variables that are integers that have string values, those variables are sex, smoker, day, and time.
+
+```{r}
+day1 <- tips[,5]
+day <- factor(day1, levels = c("Thur", "Fri", "Sat", "Sun"))
+day
+```
+
+```{r}
+female <- subset(tips, sex == "Female")
+female5 <- subset(female, size >= 5)
+female5
+```
+```{r}
+ggplot(tips, aes(x=total_bill, y=tip)) + geom_point()
+```
+This graph shows us that as the total bill increases so does the tip. This makes sense because people usually tip a percentage of their total bill. Some anomalies would be the data point where the bill was around $7 but the tip was over $5. Another anomaly would be the data point where the total bill was around $33, but the tip was around $1. This could be explained by the satisfaction level of the customers.
+
+
+```{r}
+pretip_bill <- tips[,1] - tips[,2]
+tiprate <- tips[,2]/tips[,7]
+tips <- cbind(tips, pretip_bill)
+tips <- cbind(tips, tiprate)
+head(tips)
+average_tip <- mean(tips[,9])
+average_tip
+```
+I calculated the average tip and it came out to be $1.2128.
+```{r}
+ggplot(tips, aes(x=time, y=tiprate)) + geom_boxplot()
+```
+These box plots show that the average tip rate is smaller at lunch time than dinner. 
+```{r}
+#ggplot(tips, aes(x = sex, y = total_bill)) + geom_col(aes(fill = tip), width = 0.7)
+data(tips)
+featurePlot(x=tips[,3:4], y=tips[, 1:2], plot = "pairs", auto.key=list(columns=4))
+```
+This shows that smokers tend to have a slightly higher bill and tip less. It also shows that males who smoke tip less than males who do not smoke. 
+
+```{r}
+ggplot(tips, aes(x=day, y=sex)) + geom_bar(aes(fill = sex), stat = "identity")
+```
+This graph shows us that males tend to pay the bill more often than females. It could also show that males tend to eat there more often(i.e. the group is male only or just a solo male) compared to females. The day that females do pay are Thursday or Saturday.
